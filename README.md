@@ -1,5 +1,9 @@
 # SAP Technical Log & Runbooks 🚀
 
+| Author | Date |
+| :--- | :--- |
+| Javier Morales | 8th August 2026 |
+
 This repository contains field notes, step-by-step guides (runbooks), and configuration files used in daily SAP system administration. The goal is to document solutions to real-world technical challenges and serve as a quick reference for the SAP Basis community.
 
 ## 🛠️ Core Topics
