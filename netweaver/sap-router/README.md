@@ -7,7 +7,9 @@ Under the *Support Packages & Patches* path, download the latest versions compat
 *   **SAPROUTER:** The core executable package for the service (`saprouter_*_*.sar`).
 *   **SAPCAR:** SAP's official decompression utility (`SAPCAR_*_*.exe` or Linux binary) required to extract the packages.
 *   **SAPCRYPTOLIB:** The cryptographic library mandatory for enabling Secure Network Communications (SNC) with SAP (`SAPCRYPTOLIB_*_*.sar`).
+*   **C-Runtimes (Windows only):** The Microsoft Visual C++ Redistributable (VCredist) package must be installed on the host to execute SAP binaries properly. For deployment guidelines and version compatibility, refer to [SAP Note 1553465](https://me.sap.com/notes/1553465/E) and the SAP Community article [C-runtimes needed to run SAP executables](https://community.sap.com/t5/technology-blog-posts-by-sap/c-runtimes-needed-to-run-sap-executables/ba-p/13314763).
 
+  
 ### 2. Server Directory Setup
 Create a dedicated workspace directory on the host server to isolate the executables and enforce strict security permissions at the OS level.
 
