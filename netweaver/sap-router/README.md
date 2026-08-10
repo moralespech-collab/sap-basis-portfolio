@@ -45,5 +45,54 @@ Unblock-File -Path ".\SAPCAR.exe"
 .\SAPCAR.exe -xvf sapcrypto_XXXX-XXXX.sar
 ```
 
+## 🔐 Phase 2: Environment Variables Configuration (SNC Setup)
+
+For the cryptographic library to function correctly and establish a Secure Network Communication (SNC) tunnel with SAP, you must define the system environment variables. Centralizing all components (executables, libraries, and certificates) in the same directory (`C:\usr\sap\saprouter`) is the standard practice for streamlined management.
+
+Execute the following PowerShell commands to permanently configure `SECUDIR` and `SNC_LIB` at the system level:
+
+```powershell
+# Define the SECUDIR variable pointing to the SAP Router working directory
+[Environment]::SetEnvironmentVariable("SECUDIR", "C:\usr\sap\saprouter", "Machine")
+
+# Define the SNC_LIB variable pointing directly to the cryptographic DLL
+[Environment]::SetEnvironmentVariable("SNC_LIB", "C:\usr\sap\saprouter\sapcrypto.dll", "Machine")
+
+# Refresh the environment variables in the current PowerShell session without restarting the console
+$env:SECUDIR = [Environment]::GetEnvironmentVariable("SECUDIR", "Machine")
+$env:SNC_LIB = [Environment]::GetEnvironmentVariable("SNC_LIB", "Machine")
+
+# Verify that the variables were successfully set and mapped
+Get-ChildItem Env:SECUDIR, Env:SNC_LIB
+```
+
+## 🔑 Phase 3: SNC Certificate Request Generation
+
+With the environment variables successfully configured, the crypto library is now able to handle SSL/SNC communications. The next step is to generate a Personal Security Environment (PSE) file (`local.pse`) and create a certificate request.
+
+### 1. Execute sapgenpse to Generate the Request
+Run the `sapgenpse` binary to initialize the local cryptographic environment. 
+
+> [!IMPORTANT]
+> Replace the Distinguished Name (`-r` parameter) with the official criteria provided for your specific system under the SAP Support Portal registration.
+
+```powershell
+# Navigate to the workspace (if not already there)
+cd "C:\usr/sap\saprouter"
+
+# Generate the local.pse file and the certificate request text file (certreq)
+# Format: CN=<host_name>, OU=<customer_number>, OU=SAProuter, O=SAP, C=DE
+.\sapgenpse.exe get_pse -v -r certreq -p local.pse "CN=your_server_name, OU=0001234567, OU=SAProuter, O=SAP, C=DE"
+```
+
+### 2. Enter and Confirm the PIN
+During execution, the console will prompt you to enter a PIN twice. 
+*   Choose a secure PIN code.
+*   **Document or securely store this PIN**, as it will be required to grant the SAP Router service permanent access to the cryptographic keys.
+
+This command will output two crucial elements in your `C:\usr\sap\saprouter` directory:
+1.  `local.pse`: The encrypted file hosting your private key container.
+2.  `certreq`: A plain text file containing the certificate signing request (CSR).
+
 
 
