@@ -29,6 +29,9 @@ Move-Item -Path "C:\tmp\sapcrypto*.sar" -Destination "C:\usr\sap\saprouter\"
 ### 3. Package Extraction
 Navigate to the installation directory and utilize the `SAPCAR.exe` utility to unpack the core routing binaries and cryptographic dependencies.
 
+> [!NOTE]
+> It is usually more convenient to rename the downloaded SAPCAR binary to simply `SAPCAR.exe` for easier command execution.
+
 ```powershell
 # Navigate to the SAP Router working directory
 cd "C:\usr/sap\saprouter"
