@@ -13,14 +13,17 @@ Under the *Support Packages & Patches* path, download the latest versions compat
 ### 2. Server Directory Setup
 Create a dedicated workspace directory on the host server to isolate the executables and enforce strict security permissions at the OS level.
 
-```bash
-# Create the dedicated SAP Router directory
-mkdir -p /usr/sap/saprouter
+> [!IMPORTANT]
+> All subsequent commands must be executed within an elevated PowerShell instance ("Run as Administrator").
 
-# Move the downloaded .SAR packages to the target path
-# (Replace /tmp with your actual staging file transfer directory)
-mv /tmp/saprouter*.sar /usr/sap/saprouter/
-mv /tmp/sapcrypto*.sar /usr/sap/saprouter/
+```powershell
+# Create the dedicated SAP Router directory structure
+New-Item -ItemType Directory -Force -Path "C:\usr\sap\saprouter"
+
+# Move the downloaded .SAR packages to the target installation path
+# (Replace C:\tmp with your actual download or staging directory)
+Move-Item -Path "C:\tmp\saprouter*.sar" -Destination "C:\usr\sap\saprouter\"
+Move-Item -Path "C:\tmp\sapcrypto*.sar" -Destination "C:\usr\sap\saprouter\"
 ```
 
 ### 3. Package Extraction
