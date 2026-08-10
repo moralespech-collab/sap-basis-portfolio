@@ -94,5 +94,78 @@ This command will output two crucial elements in your `C:\usr\sap\saprouter` dir
 1.  `local.pse`: The encrypted file hosting your private key container.
 2.  `certreq`: A plain text file containing the certificate signing request (CSR).
 
+## 🔐 Phase 4: Certificate Import and Credentials Setup
+
+Once you receive the signed certificate text from the SAP Support Portal, you must import it into your local environment and grant permanent execution permissions to the system.
+
+### 1. Import the Signed Certificate
+Create a file named `srcert` in `C:\usr\sap\saprouter`, paste the certificate text inside, and run:
+```powershell
+.\sapgenpse.exe import_own_cert -c srcert -p local.pse
+```
+
+### 2. Generate the Credential File (cred_v2)
+This step is mandatory so the Windows Service can open the `local.pse` file automatically without asking for a PIN code during server reboots.
+```powershell
+# Create credentials for the local Administrator or SAP service user
+.\sapgenpse.exe seclogin -p local.pse -O Administrator
+```
+
+---
+
+## 🌐 Phase 5: Routing Table Policy Configuration (saprouttab)
+
+You must define the security policies to restrict or allow traffic. Create a plain text file named `saprouttab` (without any extension) inside `C:\usr\sap\saprouter`.
+
+### Example Production Rules:
+```properties
+# ------------------------------------------------------------------
+# SAPROUTTAB - Secure Routing Policy Table
+# ------------------------------------------------------------------
+# Syntax: P/D/C <Source-Host> <Dest-Host> <Dest-Service> <Password>
+
+# 1. Allow SAP Support Portal to access your local Solution Manager (SolMan)
+P  194.39.131.34      10.0.1.50      3201
+
+# 2. Allow your local SolMan to send data out to SAP Support Services
+P  10.0.1.50          194.39.131.34  3299
+
+# DENY ALL OTHER TRAFFIC (Implicit at the end, but good practice to state)
+D  *                  *              *
+```
+
+---
+
+## 🚀 Phase 6: Windows Service Registration
+
+To ensure high availability, the SAP Router must run as an automatic Windows Background Service instead of a manual command-line prompt.
+
+Execute the following command using `sc.exe` in an elevated console:
+
+```powershell
+sc.exe create SAPRouter binPath= "C:\usr\sap\saprouter\saprouter.exe -r -R C:\usr\sap\saprouter\saprouttab -W 60000" start= auto obj= "LocalSystem" DisplayName= "SAP Router Service"
+```
+
+---
+
+## 🔍 Phase 7: Verification and Handover Checklist
+
+Before delivering the project to the client, perform the following validation tests to ensure the tunnel is fully operational.
+
+### 1. Local Service Check
+Verify that the Windows service is running and listening on port `3299`:
+```powershell
+# Check service status
+Get-Service SAPRouter
+
+# Verify active port binding
+Get-NetTCPConnection -LocalPort 3299
+```
+
+### 2. Handover Deliverables for the Client
+Provide the client's network and Basis teams with the following technical data to mark the project as completed:
+*   **External SAP Router String:** `/H/<Public_IP_or_FQDN>/S/3299` (This is what SAP or external vendors will use to reach them).
+*   **Firewall rule validation:** Confirm that external port `3299` (TCP) is bi-directionally open between the SAP Router host and SAP's public routers.
+*   **Connection Test via SM59:** Create or test an RFC destination of type `G` or `H` in the customer's SAP system to confirm data reaches `://sap.com` successfully.
 
 
