@@ -68,22 +68,7 @@ Get-ChildItem Env:SECUDIR, Env:SNC_LIB
 
 ## 🔑 Phase 3: SNC Certificate Request Generation
 
-With the environment variables successfully configured, the crypto library is now able to handle SSL/SNC communications. The next step is to generate a Personal Security Environment (PSE) file (`local.pse`) and create a certificate request.
-
-### 1. Execute sapgenpse to Generate the Request
-Run the `sapgenpse` binary to initialize the local cryptographic environment. 
-
-> [!IMPORTANT]
-> Replace the Distinguished Name (`-r` parameter) with the official criteria provided for your specific system under the SAP Support Portal registration.
-
-```powershell
-# Navigate to the workspace (if not already there)
-cd "C:\usr/sap\saprouter"
-
-# Generate the local.pse file and the certificate request text file (certreq)
-# Format: CN=<host_name>, OU=<customer_number>, OU=SAProuter, O=SAP, C=DE
-.\sapgenpse.exe get_pse -v -r certreq -p local.pse "CN=your_server_name, OU=0001234567, OU=SAProuter, O=SAP, C=DE"
-```
+### 1. Go to the [SAProuter application](https://me.sap.com/app/saproutercertificate) and from the list of SAProuters registered to your installation, choose the relevant SAProuter.
 
 ### 2. Enter and Confirm the PIN
 During execution, the console will prompt you to enter a PIN twice. 
