@@ -66,7 +66,7 @@ $env:SNC_LIB = [Environment]::GetEnvironmentVariable("SNC_LIB", "Machine")
 Get-ChildItem Env:SECUDIR, Env:SNC_LIB
 ```
 
-## 🔑 Phase 3: SNC Certificate Request Generation
+## 🔑 Phase 3: Certificate Import and Credentials Setup
 
 ### 1. Go to the [SAProuter application](https://me.sap.com/app/saproutercertificate) and from the list of SAProuters registered to your installation, choose the relevant SAProuter.
 
@@ -84,29 +84,12 @@ sapgenpse seclogin -p local.pse -x <pse password> -O <user_for _SAProuter>
 ```powwershell
 sapgenpse get_my_name -v -n Issuer
 ```
+
 The name of the issuer should be:
 `CN=SAP Cloud CA 01, OU=PKI, O=SAP SE, C=DE`
 
-## 🔐 Phase 4: Certificate Import and Credentials Setup
 
-Once you receive the signed certificate text from the SAP Support Portal, you must import it into your local environment and grant permanent execution permissions to the system.
-
-### 1. Import the Signed Certificate
-Create a file named `srcert` in `C:\usr\sap\saprouter`, paste the certificate text inside, and run:
-```powershell
-.\sapgenpse.exe import_own_cert -c srcert -p local.pse
-```
-
-### 2. Generate the Credential File (cred_v2)
-This step is mandatory so the Windows Service can open the `local.pse` file automatically without asking for a PIN code during server reboots.
-```powershell
-# Create credentials for the local Administrator or SAP service user
-.\sapgenpse.exe seclogin -p local.pse -O Administrator
-```
-
----
-
-## 🌐 Phase 5: Routing Table Policy Configuration (saprouttab)
+## 🌐 Phase 4: Routing Table Policy Configuration (saprouttab)
 
 You must define the security policies to restrict or allow traffic. Create a plain text file named `saprouttab` (without any extension) inside `C:\usr\sap\saprouter`.
 
