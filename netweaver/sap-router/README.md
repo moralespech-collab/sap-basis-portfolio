@@ -70,14 +70,22 @@ Get-ChildItem Env:SECUDIR, Env:SNC_LIB
 
 ### 1. Go to the [SAProuter application](https://me.sap.com/app/saproutercertificate) and from the list of SAProuters registered to your installation, choose the relevant SAProuter.
 
-### 2. Enter and Confirm the PIN
-During execution, the console will prompt you to enter a PIN twice. 
-*   Choose a secure PIN code.
-*   **Document or securely store this PIN**, as it will be required to grant the SAP Router service permanent access to the cryptographic keys.
+### 2. Generate a PSE
+* You must provide a password, which will be used to create yur SAProuter PSE;
+* Download the generated pse and save it as "local.pse" in the same directory as the sapgenpse executable
 
-This command will output two crucial elements in your `C:\usr\sap\saprouter` directory:
-1.  `local.pse`: The encrypted file hosting your private key container.
-2.  `certreq`: A plain text file containing the certificate signing request (CSR).
+### 3. Now you will have to create the credentials for the SAProuter with the same program (if you omit -O <user_for_SAProuter>, the credentials are created for the logged in user account):
+
+```powwershell
+sapgenpse seclogin -p local.pse -x <pse password> -O <user_for _SAProuter>
+```
+
+### 4. Check if the certificate has been imported successfully with the following command:
+```powwershell
+sapgenpse get_my_name -v -n Issuer
+```
+The name of the issuer should be:
+`CN=SAP Cloud CA 01, OU=PKI, O=SAP SE, C=DE`
 
 ## 🔐 Phase 4: Certificate Import and Credentials Setup
 
