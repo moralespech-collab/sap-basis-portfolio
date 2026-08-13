@@ -143,13 +143,16 @@ sc.exe create SAPRouter binPath= "C:\usr\sap\saprouter\saprouter.exe service -r 
 
 * Edit the string in the registry under MyComputer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\ saprouter and change ^ to " under ImagePath.
   
-* Additionally you'll have to do the following steps to make SAPCRYPTOLIB credentials available to a process that runs as an NT service
+* Go to 'Control Panel -> Services: SAPRouter -> Button: Startup', set the startup type to 'Automatic' and enter the user <SNC_admin>. The SAPRouter should NOT run under the system account.
+  
+* To avoid the error message `The description for Event ID (0) ...` in the NT Eventviewer you must make the following entries in the Registry. Under:
 
-Run the command:
+HKEY_LOCAL_MACHINE -> SYSTEM -> CurrentControlSet -> Services -> Eventlog -> Application
+enter the following key:      `SAPRouter`
+Under this, define the two following values:
 
-```powershell
-sapgenpse seclogin -p <path>\<psefile> -O <SNC_admin>
-```
+    EventMessageFile   (REG_SZ)    : <local_path>\sapevents.dll
+    TypesSupported    (REG_DWORD)  :  0x7
 
 ## 🔍 Phase 7: Verification and Handover Checklist
 
