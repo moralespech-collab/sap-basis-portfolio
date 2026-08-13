@@ -135,13 +135,21 @@ D * * *             *              *
 
 To ensure high availability, the SAP Router must run as an automatic Windows Background Service instead of a manual command-line prompt.
 
-Execute the following command using `sc.exe` in an elevated console:
+* Execute the following command using `sc.exe` in an elevated console:
 
 ```powershell
-sc.exe create SAPRouter binPath= "C:\usr\sap\saprouter\saprouter.exe -r -R C:\usr\sap\saprouter\saprouttab -W 60000" start= auto obj= "LocalSystem" DisplayName= "SAP Router Service"
+sc.exe create SAPRouter binPath= "C:\usr\sap\saprouter\saprouter.exe service -r -W 60000 -R C:\usr\sap\saprouter\saprouttab -K ^p:your_distinguished_name^" start= auto obj= "NT AUTHORITY\LocalService"
 ```
 
----
+* Edit the string in the registry under MyComputer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\ saprouter and change ^ to " under ImagePath.
+  
+* Additionally you'll have to do the following steps to make SAPCRYPTOLIB credentials available to a process that runs as an NT service
+
+Run the command:
+
+```powershell
+sapgenpse seclogin -p <path>\<psefile> -O <SNC_admin>
+```
 
 ## 🔍 Phase 7: Verification and Handover Checklist
 
