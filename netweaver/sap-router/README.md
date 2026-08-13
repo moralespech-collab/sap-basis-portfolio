@@ -93,26 +93,45 @@ The name of the issuer should be:
 
 You must define the security policies to restrict or allow traffic. Create a plain text file named `saprouttab` (without any extension) inside `C:\usr\sap\saprouter`.
 
-### Example Production Rules:
+### Example SAPROUTTAB for SNC connections registered to sapserv2 in Americas
 ```properties
 # ------------------------------------------------------------------
 # SAPROUTTAB - Secure Routing Policy Table
 # ------------------------------------------------------------------
 # Syntax: P/D/C <Source-Host> <Dest-Host> <Dest-Service> <Password>
 
-# 1. Allow SAP Support Portal to access your local Solution Manager (SolMan)
-P  194.39.131.34      10.0.1.50      3201
+KT "p:CN=sapserv2, OU=SAProuter, O=SAP, C=DE" 194.39.131.34 * 
 
-# 2. Allow your local SolMan to send data out to SAP Support Services
-P  10.0.1.50          194.39.131.34  3299
+# SNC connection to local system for R/3-Support
 
-# DENY ALL OTHER TRAFFIC (Implicit at the end, but good practice to state)
-D  *                  *              *
+# R/3 Server: 192.168.1.1
+# R/3 Instance: 00
+KP "p:CN=sapserv2, OU=SAProuter, O=SAP, C=DE" 192.168.1.1 3200 (optional SAProuter password)
+
+# SNC connection to local WINDOWS system for WTS, if applicable
+# Windows server: 192.168.1.2
+# Default WTS port: 3389
+KP "p:CN=sapserv2, OU=SAProuter, O=SAP, C=DE" 192.168.1.2 3389 (optional SAProuter password)
+
+ # SNC connection to local UNIX system for SAPtelnet, if applicable
+# UNIX server: 192.168.1.3
+# Default Telnet port: 23
+KP "p:CN=sapserv2, OU=SAProuter, O=SAP, C=DE" 192.168.1.3 23 (optional SAProuter password)
+
+ # SNC connection to local Portal system for URL access, if applicable
+# Portal server: myserver.mydomain
+# Port number: 50003
+KP "p:CN=sapserv2, OU=SAProuter, O=SAP, C=DE" myserver.mydomain 50003
+
+# Access from the local Network to SAP
+P 192.168.*.* 194.39.131.34 3299
+
+# deny all other connections
+
+D * * *             *              *
 ```
 
----
-
-## 🚀 Phase 6: Windows Service Registration
+## 🚀 Phase 5: Windows Service Registration
 
 To ensure high availability, the SAP Router must run as an automatic Windows Background Service instead of a manual command-line prompt.
 
