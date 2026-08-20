@@ -16,4 +16,16 @@ Step-by-step implementation and documentation of SQL Server database replication
 - [ ] `sysadmin` privileges on both database instances.
 
 ## 🛠️ Step-by-Step Configuration Guide
-*(This section will be completed as we progress)*
+
+### Step 1: Verify SQL Server Agent Status
+
+Check the SQL Server Agent service status using PowerShell:
+
+```powershell
+Get-Service -Name "SQLSERVERAGENT"
+Status   Name               DisplayName
+------   ----               -----------
+Running  SQLSERVERAGENT     SQL Server Agent (MSSQLSERVER)
+```
+The status shoud be `Running`
+
