@@ -85,17 +85,29 @@ To minimize resource consumption and CPU load on the Publisher instance, the **D
 
 Configure the Subscriber instance as the Distributor and grant access to the Publisher server.
 
-1. Connect to the **Subscriber** instance in SSMS using your service user <DOMAIN>\<service_user>.
-2. Right-click **Replication** -> Select **Configure Distribution...**.
+1. Connect to the **Subscriber** instance in SSMS using your service user `<DOMAIN>\<service_user>`.
+2. Right-click **Replication** $\rightarrow$ Select **Configure Distribution...**.
 3. Confirm the server acts as its own Distributor and set the default snapshot path to `\\DESTINATIONHOST-V\ReplicaSQL`.
-4. On the **Publishers** page, click **Add** $\rightarrow$ **Add SQL Server Publisher...** and connect to the Publisher instance.
+4. On the **Publishers** page, click **Add** $\rightarrow$ **Add SQL Server Publisher...** and connect to the Publisher instance, using the service user `<DOMAIN>\<service_user>`
 5. Set the administrative link password for the Publisher-to-Distributor connection.
 6. Click **Finish** to complete the distribution setup.
 
 * **Outcome:** Establishes the trust relationship allowing the Publisher to send replication jobs to the Subscriber-side Distributor.
 
 
+### Step 5: Configure Publisher to Use Remote Subscriber-Side Distributor
 
+Once the Distributor is initialized on the Subscriber server, point the **Publisher** instance to use this remote Distributor.
+
+1. Connect to the **Publisher** instance in SSMS.
+2. Right-click **Replication** $\rightarrow$ Select **Configure Distribution...**.
+3. In the wizard, select the option: **Use the following server as the distributor** (Remote Distributor).
+4. Click **Add...** and enter the **Subscriber** server name.
+5. Authenticate using the newly created `replica_mev` SQL Server Login.
+6. Enter the administrative password established during the Distributor setup on the Subscriber.
+7. Complete the wizard to finalize the remote distribution link.
+
+* **Validation:** Expand **Replication** on the Publisher. It will now show **Local Publications** pointing to the Subscriber-side Distributor.
 
 
 
