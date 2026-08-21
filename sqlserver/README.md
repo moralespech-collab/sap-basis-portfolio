@@ -77,8 +77,22 @@ ALTER SERVER ROLE sysadmin ADD MEMBER [<DOMAIN>\<service_user>];
 GO
 ```
 
+### Architecture Update: Subscriber-Side Distributor
 
+To minimize resource consumption and CPU load on the Publisher instance, the **Distributor** component is co-located on the **Subscriber** server.
 
+### Step 4: Register Publisher on Subscriber-Side Distributor
+
+Configure the Subscriber instance as the Distributor and grant access to the Publisher server.
+
+1. Connect to the **Subscriber** instance in SSMS using your service user <DOMAIN>\<service_user>.
+2. Right-click **Replication** -> Select **Configure Distribution...**.
+3. Confirm the server acts as its own Distributor and set the default snapshot path to `\\DESTINATIONHOST-V\ReplicaSQL`.
+4. On the **Publishers** page, click **Add** $\rightarrow$ **Add SQL Server Publisher...** and connect to the Publisher instance.
+5. Set the administrative link password for the Publisher-to-Distributor connection.
+6. Click **Finish** to complete the distribution setup.
+
+* **Outcome:** Establishes the trust relationship allowing the Publisher to send replication jobs to the Subscriber-side Distributor.
 
 
 
