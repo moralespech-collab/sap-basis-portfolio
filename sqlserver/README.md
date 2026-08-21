@@ -107,7 +107,39 @@ Once the Distributor is initialized on the Subscriber server, point the **Publis
 6. Enter the administrative password established during the Distributor setup on the Subscriber.
 7. Complete the wizard to finalize the remote distribution link.
 
-* **Validation:** Expand **Replication** on the Publisher. It will now show **Local Publications** pointing to the Subscriber-side Distributor.
+### Step 6: Create Transactional Publication (`Pub_Prolamsa_Tables`)
+
+With the remote Distributor linked, create the local publication on the **Publisher** instance to share the specified tables.
+
+1. In SSMS on the **Publisher**, expand **Replication** $\rightarrow$ right-click **Local Publications** $\rightarrow$ select **New Publication...**.
+2. **Database:** Select `MEPWIBDB`.
+3. **Publication Type:** Select **Transactional publication**.
+4. **Articles:** Expand **Tables** and select the specific target tables:
+   - `dbo.AXIS_ACTIVITY_LOG`
+   - `dbo.AXIS_NC_DATA`
+5. **Snapshot Agent:** Check *"Create a snapshot immediately and keep the snapshot available to initialize subscriptions"*.
+6. **Agent Security:**
+   - Click **Security Settings...**.
+   - Set the **Snapshot Agent** process account to use `PROLAMSA_MTY\mstrservices`.
+   - Set the connection to the Publisher using Windows Authentication.
+7. **Publication Name:** Enter `Pub_Prolamsa_Tables` and click **Finish**.
+
+---
+
+### Step 7: Configure Push Subscription on Publisher
+
+Link the newly created publication to the target database on the **Subscriber** instance.
+
+1. Right-click `Pub_Prolamsa_Tables` $\rightarrow$ select **New Subscriptions...**.
+2. **Distribution Agent Location:** Choose **Run all agents at the Distributor (Push subscription)**.
+3. **Subscribers:** Click **Add Subscriber** $\rightarrow$ **SQL Server Subscriber** and connect to the Subscriber instance.
+4. **Subscription Database:** Select or create the destination database on the Subscriber.
+5. **Distribution Agent Security:** Click ** Security Settings...** (`...`) next to the Subscriber connection:
+   - Set the agent to run under `PROLAMSA_MTY\mstrservices` at the Distributor.
+   - Set the connection to the Subscriber using SQL Server Authentication with the `replica_mev` login.
+6. **Synchronization Schedule:** Set to **Run continuously**.
+7. **Initialize Subscription:** Select **Initialize** and check **Immediately**.
+8. Click **Finish** to generate the subscription.
 
 
 
